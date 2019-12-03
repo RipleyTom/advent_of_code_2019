@@ -13,6 +13,14 @@ pub fn run_puzzle() {
         let mut curpos = (0, 0);
         let mut steps = 0;
 
+        let mut check_wire = |wire: &mut (u64, u64)| {
+                        if (wire.0 & curwire) == 0 {
+                            (*wire).0 |= curwire;
+                            (*wire).1 += steps;
+                        }
+                        steps += 1;
+        };
+
         for op in line.unwrap().split(',') {
             let diff = i64::from_str_radix(&op[1..], 10).unwrap();
 
@@ -20,44 +28,28 @@ pub fn run_puzzle() {
                 "L" => {
                     for x in (((curpos.0 + 1) - diff)..(curpos.0 + 1)).rev() {
                         let wire = wires.entry((x, curpos.1)).or_insert((0, 0));
-                        if (wire.0 & curwire) == 0 {
-                            (*wire).0 |= curwire;
-                            (*wire).1 += steps;
-                        }
-                        steps += 1;
+                        check_wire(wire);
                     }
                     curpos.0 -= diff;
                 }
                 "R" => {
                     for x in curpos.0..curpos.0 + diff {
                         let wire = wires.entry((x, curpos.1)).or_insert((0, 0));
-                        if (wire.0 & curwire) == 0 {
-                            (*wire).0 |= curwire;
-                            (*wire).1 += steps;
-                        }
-                        steps += 1;
+                        check_wire(wire);
                     }
                     curpos.0 += diff;
                 }
                 "U" => {
                     for y in (((curpos.1 + 1) - diff)..(curpos.1 + 1)).rev() {
                         let wire = wires.entry((curpos.0, y)).or_insert((0, 0));
-                        if (wire.0 & curwire) == 0 {
-                            (*wire).0 |= curwire;
-                            (*wire).1 += steps;
-                        }
-                        steps += 1;
+                        check_wire(wire);
                     }
                     curpos.1 -= diff;
                 }
                 "D" => {
                     for y in curpos.1..curpos.1 + diff {
                         let wire = wires.entry((curpos.0, y)).or_insert((0, 0));
-                        if (wire.0 & curwire) == 0 {
-                            (*wire).0 |= curwire;
-                            (*wire).1 += steps;
-                        }
-                        steps += 1;
+                        check_wire(wire);
                     }
                     curpos.1 += diff;
                 }
