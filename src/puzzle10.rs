@@ -25,101 +25,101 @@ impl Param {
     }
 }
 
+fn get_params(vec: &Vec<i64>, index: usize, num_params: usize) -> Vec<Param> {
+    let mut params = Vec::new();
+
+    for i in 1..num_params+1 {
+        params.push(Param::new(vec, index, i));
+    }
+
+    params
+}
+
 fn op_add(vec: &mut Vec<i64>, index: usize) -> usize {
-    let param1 = Param::new(vec, index, 1);
-    let param2 = Param::new(vec, index, 2);
-    let param3 = Param::new(vec, index, 3);
+    let params = get_params(vec, index, 3);
 
-    assert!(param3.mode == 0);
+    assert!(params[2].mode == 0);
 
-    vec[param3.value as usize] = param1.get_value(vec) + param2.get_value(vec);
+    vec[params[2].value as usize] = params[0].get_value(vec) + params[1].get_value(vec);
 
     index + 4
 }
 
 fn op_mul(vec: &mut Vec<i64>, index: usize) -> usize {
-    let param1 = Param::new(vec, index, 1);
-    let param2 = Param::new(vec, index, 2);
-    let param3 = Param::new(vec, index, 3);
+    let params = get_params(vec, index, 3);
 
-    vec[param3.value as usize] = param1.get_value(vec) * param2.get_value(vec);
+    vec[params[2].value as usize] = params[0].get_value(vec) * params[1].get_value(vec);
 
     index + 4
 }
 
 fn op_input(vec: &mut Vec<i64>, index: usize) -> usize {
-    let param1 = Param::new(vec, index, 1);
-    assert!(param1.mode == 0);
+    let params = get_params(vec, index, 1);
+    assert!(params[0].mode == 0);
 
-    vec[param1.value as usize] = 5;
+    vec[params[0].value as usize] = 5;
 
     index + 2
 }
 
 fn op_output(vec: &Vec<i64>, index: usize) -> usize {
-    let param1 = Param::new(vec, index, 1);
+    let params = get_params(vec, index, 1);
 
-    println!("Output command: {}", param1.get_value(vec));
+    println!("Output command: {}", params[0].get_value(vec));
 
     index + 2
 }
 
 fn op_jump_if_true(vec: &Vec<i64>, index: usize) -> usize {
-    let param1 = Param::new(vec, index, 1);
-    let param2 = Param::new(vec, index, 2);
+    let params = get_params(vec, index, 2);
 
-    if param1.get_value(&vec) != 0 {
-        param2.get_value(&vec) as usize
+    if params[0].get_value(vec) != 0 {
+        params[1].get_value(vec) as usize
     } else {
         index + 3
     }
 }
 
 fn op_jump_if_false(vec: &Vec<i64>, index: usize) -> usize {
-    let param1 = Param::new(vec, index, 1);
-    let param2 = Param::new(vec, index, 2);
+    let params = get_params(vec, index, 2);
 
-    if param1.get_value(&vec) == 0 {
-        param2.get_value(&vec) as usize
+    if params[0].get_value(vec) == 0 {
+        params[1].get_value(vec) as usize
     } else {
         index + 3
     }
 }
 
 fn op_lessthan(vec: &mut Vec<i64>, index: usize) -> usize {
-    let param1 = Param::new(vec, index, 1);
-    let param2 = Param::new(vec, index, 2);
-    let param3 = Param::new(vec, index, 3);
+    let params = get_params(vec, index, 3);
 
-    assert!(param3.mode == 0);
+    assert!(params[2].mode == 0);
 
     let to_store;
 
-    if param1.get_value(&vec) < param2.get_value(&vec) {
+    if params[0].get_value(vec) < params[1].get_value(vec) {
         to_store = 1;
     } else {
         to_store = 0;
     }
-    vec[param3.value as usize] = to_store;
+    vec[params[2].value as usize] = to_store;
 
     index + 4
 }
 
 fn op_equal(vec: &mut Vec<i64>, index: usize) -> usize {
-    let param1 = Param::new(vec, index, 1);
-    let param2 = Param::new(vec, index, 2);
-    let param3 = Param::new(vec, index, 3);
+    let params = get_params(vec, index, 3);
 
-    assert!(param3.mode == 0);
+    assert!(params[2].mode == 0);
 
     let to_store;
 
-    if param1.get_value(&vec) == param2.get_value(&vec) {
+    if params[0].get_value(vec) == params[1].get_value(vec) {
         to_store = 1;
     } else {
         to_store = 0;
     }
-    vec[param3.value as usize] = to_store;
+    vec[params[2].value as usize] = to_store;
 
     index + 4
 }
