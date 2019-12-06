@@ -2,6 +2,10 @@ use std::fs::File;
 use std::io::Read;
 use std::collections::HashMap;
 
+fn get_orbiting<'a>(obj: &str, orbits: &'a Vec<(String, String)>) -> &'a String {
+    &orbits.iter().find(|&orbit| orbit.1 == *obj).unwrap().0
+}
+
 fn calculate_orbits(obj: &String, orbits: &Vec<(String, String)>, num_orbits: &mut HashMap<String, u64>) -> u64 {
     if obj == "COM" {
         return 0;
@@ -12,16 +16,10 @@ fn calculate_orbits(obj: &String, orbits: &Vec<(String, String)>, num_orbits: &m
     }
 
     // Find object it's orbiting
-    let mut orbiting = None;
-    for orbit in orbits {
-        if orbit.1 == *obj {
-            orbiting = Some(&orbit.0);
-        }
-    }
+    let orbiting = get_orbiting(obj, orbits);
 
-    let orbiter = orbiting.unwrap();
-
-    let obj_orbits = calculate_orbits(orbiter, orbits, num_orbits) + 1;
+    // Current object is one orbit away from the object it's orbiting
+    let obj_orbits = calculate_orbits(orbiting, orbits, num_orbits) + 1;
     num_orbits.insert(obj.clone(), obj_orbits);
 
     obj_orbits
@@ -46,10 +44,7 @@ pub fn run_puzzle() {
         calculate_orbits(&orbit.1, &orbits, &mut num_orbits);
     }
 
-    let mut total = 0;
-    for num in num_orbits {
-        total += num.1;
-    }
+    let total: u64 = num_orbits.iter().map(|orbit| orbit.1).sum();
 
     println!("Total orbits is: {}", total);
 }

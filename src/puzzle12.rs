@@ -2,6 +2,10 @@ use std::fs::File;
 use std::io::Read;
 use std::collections::HashMap;
 
+fn get_orbiting<'a>(obj: &str, orbits: &'a Vec<(String, String)>) -> &'a String {
+    &orbits.iter().find(|&orbit| orbit.1 == *obj).unwrap().0
+}
+
 fn calculate_orbits(obj: &String, orbits: &Vec<(String, String)>, num_orbits: &mut HashMap<String, u64>) -> u64 {
     if obj == "COM" {
         return 0;
@@ -12,29 +16,13 @@ fn calculate_orbits(obj: &String, orbits: &Vec<(String, String)>, num_orbits: &m
     }
 
     // Find object it's orbiting
-    let mut orbiting = None;
-    for orbit in orbits {
-        if orbit.1 == *obj {
-            orbiting = Some(&orbit.0);
-        }
-    }
+    let orbiting = get_orbiting(obj, orbits);
 
-    let orbiter = orbiting.unwrap();
-
-    let obj_orbits = calculate_orbits(orbiter, orbits, num_orbits) + 1;
+    // Current object is one orbit away from the object it's orbiting
+    let obj_orbits = calculate_orbits(orbiting, orbits, num_orbits) + 1;
     num_orbits.insert(obj.clone(), obj_orbits);
 
     obj_orbits
-}
-
-fn get_orbiting(obj: &str, orbits: &Vec<(String, String)>) -> String {
-    for orbit in orbits {
-        if orbit.1 == obj {
-            return orbit.0.clone();
-        }
-    }
-
-    panic!("Orbiting object not found for {}", obj);
 }
 
 fn list_systems(obj: &str, orbits: &Vec<(String, String)>) -> Vec<String> {
@@ -53,7 +41,7 @@ fn list_systems(obj: &str, orbits: &Vec<(String, String)>) -> Vec<String> {
         }
     }
 
-    panic!("");
+    panic!("Object {} not found orbiting anything", obj);
 }
 
 pub fn run_puzzle() {
@@ -83,8 +71,8 @@ pub fn run_puzzle() {
 
     for sys in &you_systems {
         if let Some(common) = san_systems.iter().find(|&dasys| *dasys == *sys) {
-            let distance_you = *num_orbits.get(&you_orbiting).unwrap();
-            let distance_san = *num_orbits.get(&san_orbiting).unwrap();
+            let distance_you = *num_orbits.get(you_orbiting).unwrap();
+            let distance_san = *num_orbits.get(san_orbiting).unwrap();
             let distance_common = *num_orbits.get(common).unwrap();    
 
             let distance = (distance_you - distance_common) + (distance_san - distance_common);
