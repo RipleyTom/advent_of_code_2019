@@ -1,7 +1,5 @@
-mod puzzle11;
-mod puzzle12;
+mod puzzle14;
 
 fn main() {
-    puzzle11::run_puzzle();
-    puzzle12::run_puzzle();
+    puzzle14::run_puzzle();
 }
