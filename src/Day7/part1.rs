@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::fs::File;
 use std::io::Read;
 
@@ -28,7 +29,7 @@ impl Param {
 fn get_params(vec: &Vec<i64>, index: usize, num_params: usize) -> Vec<Param> {
     let mut params = Vec::new();
 
-    for i in 1..num_params+1 {
+    for i in 1..num_params + 1 {
         params.push(Param::new(vec, index, i));
     }
 
@@ -53,19 +54,19 @@ fn op_mul(vec: &mut Vec<i64>, index: usize) -> usize {
     index + 4
 }
 
-fn op_input(vec: &mut Vec<i64>, index: usize) -> usize {
+fn op_input(vec: &mut Vec<i64>, index: usize, input: i64) -> usize {
     let params = get_params(vec, index, 1);
     assert!(params[0].mode == 0);
 
-    vec[params[0].value as usize] = 5;
+    vec[params[0].value as usize] = input;
 
     index + 2
 }
 
-fn op_output(vec: &Vec<i64>, index: usize) -> usize {
+fn op_output(vec: &Vec<i64>, index: usize, output: &mut i64) -> usize {
     let params = get_params(vec, index, 1);
 
-    println!("Output command: {}", params[0].get_value(vec));
+    *output = params[0].get_value(vec);
 
     index + 2
 }
@@ -124,16 +125,18 @@ fn op_equal(vec: &mut Vec<i64>, index: usize) -> usize {
     index + 4
 }
 
-
-fn run_program(mut vec: Vec<i64>) {
+fn run_program(mut vec: Vec<i64>, input_phase: i64, input_signal: i64) -> i64 {
     let mut op_index = 0;
+    let mut output = 0;
+
+    let mut inputs = vec![input_signal, input_phase];
 
     while op_index < vec.len() {
         match vec[op_index] % 100 {
             1 => op_index = op_add(&mut vec, op_index),
             2 => op_index = op_mul(&mut vec, op_index),
-            3 => op_index = op_input(&mut vec, op_index),
-            4 => op_index = op_output(&vec, op_index),
+            3 => op_index = op_input(&mut vec, op_index, inputs.pop().unwrap()),
+            4 => op_index = op_output(&vec, op_index, &mut output),
             5 => op_index = op_jump_if_true(&vec, op_index),
             6 => op_index = op_jump_if_false(&vec, op_index),
             7 => op_index = op_lessthan(&mut vec, op_index),
@@ -142,14 +145,48 @@ fn run_program(mut vec: Vec<i64>) {
             _ => panic!("Invalid opcode!"),
         }
     }
+
+    output
+}
+
+fn generate_combination(cur: &mut [i64; 5], index: usize, left: &HashSet<i64>, combinations: &mut Vec<[i64; 5]>) {
+    if index == 5 {
+        combinations.push(cur.clone());
+        return;
+    }
+
+    for v in left {
+        cur[index] = *v;
+        let mut left_clone = left.clone();
+        left_clone.remove(v);
+        generate_combination(cur, index + 1, &mut left_clone, combinations);
+    }
 }
 
 pub fn run_puzzle() {
-    let mut file = File::open("input_4.txt").expect("Failed to open input_4.txt");
+    let mut file = File::open("input_day7.txt").expect("Failed to open input_day7.txt");
     let mut ops_string = String::new();
     file.read_to_string(&mut ops_string).unwrap();
 
     let vec: Vec<i64> = ops_string.split(',').map(|text| text.trim().parse().unwrap()).collect();
 
-    run_program(vec);
+    let mut combinations = Vec::new();
+    let mut array = [0; 5];
+    let left = [0, 1, 2, 3, 4].iter().cloned().collect();
+    generate_combination(&mut array, 0, &left, &mut combinations);
+
+    let mut max = 0;
+
+    for c in &combinations {
+        let mut output = 0;
+        for i in 0..5 {
+            output = run_program(vec.clone(), c[i], output);
+        }
+
+        if output > max {
+            max = output;
+        }
+    }
+
+    println!("Max is: {}", max);
 }

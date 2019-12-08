@@ -1,7 +1,7 @@
 pub fn test_number(num: u64) -> bool {
     let mut last_digit = num % 10;
     let mut number = num / 10;
-    let mut pair_found = false;
+    let (mut min_pair, mut cur_pair) = (9, 1);
 
     while number != 0 {
         let current_digit = number % 10;
@@ -10,14 +10,23 @@ pub fn test_number(num: u64) -> bool {
         }
 
         if last_digit == current_digit {
-            pair_found = true;
+            cur_pair += 1;
+        } else {
+            if cur_pair > 1 && cur_pair < min_pair {
+                min_pair = cur_pair;
+            }
+            cur_pair = 1;
         }
 
         last_digit = current_digit;
         number /= 10;
     }
 
-    if pair_found {
+    if cur_pair > 1 && cur_pair < min_pair {
+        min_pair = cur_pair;
+    }
+
+    if min_pair == 2 {
         return true;
     }
 
@@ -36,5 +45,5 @@ pub fn run_puzzle() {
         }
     }
 
-    println!("Puzzle 7 result: {}", count);
+    println!("Result: {}", count);
 }

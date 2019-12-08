@@ -45,7 +45,7 @@ fn list_systems(obj: &str, orbits: &Vec<(String, String)>) -> Vec<String> {
 }
 
 pub fn run_puzzle() {
-    let mut file = File::open("input_5.txt").expect("Failed to open input_5.txt");
+    let mut file = File::open("input_day6.txt").expect("Failed to open input_day6.txt");
     let mut ops_string = String::new();
     file.read_to_string(&mut ops_string).unwrap();
 

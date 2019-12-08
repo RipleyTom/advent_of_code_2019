@@ -183,7 +183,7 @@ fn generate_combination(cur: &mut [i64; 5], index: usize, left: &HashSet<i64>, c
 }
 
 pub fn run_puzzle() {
-    let mut file = File::open("input_6.txt").expect("Failed to open input_6.txt");
+    let mut file = File::open("input_day7.txt").expect("Failed to open input_day7.txt");
     let mut ops_string = String::new();
     file.read_to_string(&mut ops_string).unwrap();
 

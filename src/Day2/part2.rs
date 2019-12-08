@@ -30,7 +30,7 @@ fn run_program(mut vec: Vec<i64>, noun: i64, verb: i64) -> i64 {
 }
 
 pub fn run_puzzle() {
-    let mut file = File::open("input_2.txt").expect("Failed to open input_2.txt");
+    let mut file = File::open("input_day2.txt").expect("Failed to open input_day2.txt");
     let mut ops_string = String::new();
     file.read_to_string(&mut ops_string).unwrap();
 
@@ -55,8 +55,8 @@ pub fn run_puzzle() {
     }
 
     if !found {
-        println!("Puzzle 4 result not found?!");
+        println!("Result not found?!");
     } else {
-        println!("Puzzle 4 result: {}", result);
+        println!("Result: {}", result);
     }
 }

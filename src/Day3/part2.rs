@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 pub fn run_puzzle() {
-    let file = File::open("input_3.txt").expect("Failed to open input_3.txt");
+    let file = File::open("input_day3.txt").expect("Failed to open input_day3.txt");
     let br = BufReader::new(file);
 
     let mut wires: HashMap<(i64, i64), (u64, u64)> = HashMap::new();
@@ -69,5 +69,5 @@ pub fn run_puzzle() {
         }
     }
 
-    println!("Puzzle 6 result: {}", curdist);
+    println!("Result: {}", curdist);
 }

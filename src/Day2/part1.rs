@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::Read;
 
 pub fn run_puzzle() {
-    let mut file = File::open("input_2.txt").expect("Failed to open input_2.txt");
+    let mut file = File::open("input_day2.txt").expect("Failed to open input_day2.txt");
     let mut ops_string = String::new();
     file.read_to_string(&mut ops_string).unwrap();
 
@@ -32,5 +32,5 @@ pub fn run_puzzle() {
         op_index += 4;
     }
 
-    println!("Puzzle 3 result: {}", vec[0]);
+    println!("Result: {}", vec[0]);
 }
