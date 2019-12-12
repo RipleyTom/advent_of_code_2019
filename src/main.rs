@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-mod Day11;
+mod Day12;
 
 fn main() {
-    Day11::part1::run_puzzle();
-    Day11::part2::run_puzzle();
+    Day12::part1::run_puzzle();
+    Day12::part2::run_puzzle();
 }
