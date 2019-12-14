@@ -91,29 +91,28 @@ pub fn run_puzzle() {
         reactions.push((result, elements));
     }
 
-    let fuel_to_produce: i64 = 1000000000000 / 362713; // We know from part 1 we can produce at least that much
-    let mut to_add = 0;
+    let mut fuel_to_produce: i64 = 1000000000000 / 362713; // We know from part 1 we can produce at least that much
     let mut inc_ratio = fuel_to_produce / 2;
 
     loop {
-        let res = evaluate(fuel_to_produce + to_add, &reactions);
+        let res = evaluate(fuel_to_produce, &reactions);
 
-        // println!("Producing {} FUEL require {} ORE", fuel_to_produce + to_add, res);
+        // println!("Producing {} FUEL require {} ORE", fuel_to_produce, res);
 
         if res > 1000000000000 {
-            to_add -= inc_ratio;
+            fuel_to_produce -= inc_ratio;
             inc_ratio /= 2;
-            to_add += inc_ratio;
+            fuel_to_produce += inc_ratio;
         } else {
             // Make sure we're at the edge
-            let new_res = evaluate(fuel_to_produce + to_add + 1, &reactions);
+            let new_res = evaluate(fuel_to_produce + 1, &reactions);
             if new_res > 1000000000000 {
                 break;
             }
 
-            to_add += inc_ratio;
+            fuel_to_produce += inc_ratio;
         }
     }
 
-    println!("We can produce {} FUEL", fuel_to_produce + to_add);
+    println!("We can produce {} FUEL", fuel_to_produce);
 }
